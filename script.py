@@ -74,7 +74,7 @@ def download_and_merge_newspaper(date_str):
                     break
 
     if pdf_files:
-        output_filename = f"SAAMANA_PUN_{date_str}.pdf"
+        output_filename = f"SAAMANA_PUNE_{date_str}.pdf"
         merge_pdfs(pdf_files, output_filename)
         
         # Clean up individual page PDFs
