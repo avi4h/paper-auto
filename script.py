@@ -93,7 +93,7 @@ if __name__ == "__main__":
     output_file = download_and_merge_newspaper(today_date)
     
     if output_file:
-        subject = f"Sammna - {today_date_word}"
+        subject = f"Saamana - {today_date_word}"
         body = f"Please find attached PDF for {today_date_word}."
         to_email = os.getenv('RECEIVER_EMAIL')
         
