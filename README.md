@@ -7,7 +7,7 @@ Efficient Python script that automates the daily download, merging, and email di
 1. **Clone the repository**:
     ```sh
     git clone https://github.com/avi4h/saamana-auto.git
-    cd saamana
+    cd saamana-auto
     ```
 
 2. **Install dependencies**:
