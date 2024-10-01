@@ -40,7 +40,7 @@ def send_email_mailgun(subject, body, to_email, attachment_path):
     return requests.post(
         f"https://api.mailgun.net/v3/{MAILGUN_DOMAIN}/messages",
         auth=("api", MAILGUN_API_KEY),
-        files=[("attachment", ("Sammna.pdf", open(attachment_path, "rb").read()))],
+        files=[("attachment", ("Saamana.pdf", open(attachment_path, "rb").read()))],
         data={"from": f"Cos <mailgun@{MAILGUN_DOMAIN}>",
             "to": [to_email],
             "subject": subject,
@@ -74,7 +74,7 @@ def download_and_merge_newspaper(date_str):
                     break
 
     if pdf_files:
-        output_filename = f"SAMANA_PUN_{date_str}.pdf"
+        output_filename = f"SAAMANA_PUN_{date_str}.pdf"
         merge_pdfs(pdf_files, output_filename)
         
         # Clean up individual page PDFs
