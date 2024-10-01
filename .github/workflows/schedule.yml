@@ -23,16 +23,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install requests PyPDF2
 
-    - name: Debug environment variables
-      run: |
-        echo "MAILGUN_API_KEY: $MAILGUN_API_KEY"
-        echo "MAILGUN_DOMAIN: $MAILGUN_DOMAIN"
-        echo "RECEIVER_EMAIL: $RECEIVER_EMAIL"
-      env:
-        MAILGUN_API_KEY: ${{ secrets.MAILGUN_API_KEY }}
-        MAILGUN_DOMAIN: ${{ secrets.MAILGUN_DOMAIN }}
-        RECEIVER_EMAIL: ${{ secrets.RECEIVER_EMAIL }}
-
     - name: Run script
       env:
         MAILGUN_API_KEY: ${{ secrets.MAILGUN_API_KEY }}
