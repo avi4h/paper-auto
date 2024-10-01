@@ -41,7 +41,7 @@ def send_email_mailgun(subject, body, to_email, attachment_path):
         f"https://api.mailgun.net/v3/{MAILGUN_DOMAIN}/messages",
         auth=("api", MAILGUN_API_KEY),
         files=[("attachment", ("Saamana.pdf", open(attachment_path, "rb").read()))],
-        data={"from": f"Cos <mailgun@{MAILGUN_DOMAIN}>",
+        data={"from": f"Cosmoo <mailgun@{MAILGUN_DOMAIN}>",
             "to": [to_email],
             "subject": subject,
             "text": body})
