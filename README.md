@@ -1,8 +1,18 @@
+# `SAAMANA-AUTO`
+
+<p align="left">
+	<img src="https://img.shields.io/github/last-commit/avi4h/saamana-auto?style=flat&logo=git&logoColor=white&color=green" alt="last-commit">
+	<img src="https://img.shields.io/badge/Python-FFE01B?style=flat&logo=Python&logoColor=3776AB&color=white" alt="Python">
+	<img src="https://img.shields.io/badge/GitHub%20Actions-2088FF.svg?style=flat&logo=GitHub-Actions&logoColor=white" alt="GitHub%20Actions">
+    <img src="https://img.shields.io/badge/Mailgun%20API-F06B66?style=flat&logo=mailgun&logoColor=white" alt="Mailgun%20API">
+    <img src="https://img.shields.io/badge/Cron-DDF4FF?style=flat&logo=pythonanywhere&logoColor=black" alt="PythonAnywhere">
+</p>
+	
 Efficient Python script that automates the daily download, merging, and email distribution of PDF file of Saamana e-newspaper. Concurrency techniques and secure HTTP requests, this script ensures timely and automated delivery of the newspaper to the specified recipient.
 
-## Setup
+## 🚀 Setup
 
-### Installation
+### 📦 Installation
 
 1. **Clone the repository**:
     ```sh
@@ -24,7 +34,7 @@ Efficient Python script that automates the daily download, merging, and email di
     RECEIVER_EMAIL=receiver-email@example.com
     ```
 
-### GitHub Actions Configuration
+### 🤖 GitHub Actions Configuration
 
 1. **Add Secrets**:
     - Go to your GitHub repository.
@@ -38,7 +48,7 @@ Efficient Python script that automates the daily download, merging, and email di
 2. **Workflow Configuration**:
     The workflow is defined in `.github/workflows/schedule.yml` and is set to run daily at 2:00 AM UTC.
 
-## Usage
+## 📈 Usage
 
 The script is designed to run automatically via GitHub Actions. However, you can also run it manually:
 
@@ -46,7 +56,7 @@ The script is designed to run automatically via GitHub Actions. However, you can
 python script.py
 ```
 
-## Code Excerpt
+## 📟 Code Excerpt
 
 Here's a technical excerpt from the script showcasing the SSL adapter for secure HTTP requests and the PDF merging functionality:
 
@@ -81,10 +91,11 @@ def merge_pdfs(pdf_files, output_filename):
     merger.close()
 ```
 
-## Support
+## ⚙️ Support
 
 If you encounter any issues with this repository or have any questions, please open an issue in the Issues section. 
 
-## Issues 
+## 🚨 Issues 
 
 If necessary, I can remove this repository upon request.
+
