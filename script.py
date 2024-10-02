@@ -30,17 +30,19 @@ def merge_pdfs(pdf_files, output_filename):
     merger.write(output_filename)
     merger.close()
 
-def send_email_mailgun(subject, body, to_email, attachment_path):
+def send_email_mailgun(subject, body, to_email, attachment_path, date_str):
     MAILGUN_API_KEY = os.getenv('MAILGUN_API_KEY')
     MAILGUN_DOMAIN = os.getenv('MAILGUN_DOMAIN')
     
     session = requests.Session()
     session.mount('https://', SSLAdapter())
 
+    attachment_filename = f"Saamana_{date_str}.pdf"
+
     return requests.post(
         f"https://api.mailgun.net/v3/{MAILGUN_DOMAIN}/messages",
         auth=("api", MAILGUN_API_KEY),
-        files=[("attachment", ("Saamana.pdf", open(attachment_path, "rb").read()))],
+        files=[("attachment", (attachment_filename, open(attachment_path, "rb").read()))],
         data={"from": f"Cosmoo <mailgun@{MAILGUN_DOMAIN}>",
             "to": [to_email],
             "subject": subject,
@@ -97,7 +99,7 @@ if __name__ == "__main__":
         body = f"Please find attached PDF for {today_date_word}."
         to_email = os.getenv('RECEIVER_EMAIL')
         
-        response = send_email_mailgun(subject, body, to_email, output_file)
+        response = send_email_mailgun(subject, body, to_email, output_file, today_date)
         if response.status_code == 200:
             print(f"Email sent successfully with attachment: {output_file}")
         else:
