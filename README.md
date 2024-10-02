@@ -1,4 +1,4 @@
-Efficient Python script that automates the daily download, merging, and email distribution of PDF files from the Saamana newspaper. Concurrency techniques and secure HTTP requests, this script ensures timely and automated delivery of the newspaper to the specified recipient.
+Efficient Python script that automates the daily download, merging, and email distribution of PDF files from the Saamana e-newspaper. Concurrency techniques and secure HTTP requests, this script ensures timely and automated delivery of the newspaper to the specified recipient.
 
 ## Setup
 
