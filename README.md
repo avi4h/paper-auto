@@ -4,11 +4,12 @@
 	<img src="https://img.shields.io/github/last-commit/avi4h/saamana-auto?style=flat&logo=git&logoColor=white&color=green" alt="last-commit">
 	<img src="https://img.shields.io/badge/Python-FFE01B?style=flat&logo=Python&logoColor=3776AB&color=white" alt="Python">
 	<img src="https://img.shields.io/badge/GitHub%20Actions-2088FF.svg?style=flat&logo=GitHub-Actions&logoColor=white" alt="GitHub%20Actions">
+    <img src="https://img.shields.io/badge/Ghostscript-purple.svg?style=flat&logo=gitee&logoColor=black" alt="GitHub%20Actions">
     <img src="https://img.shields.io/badge/Mailgun%20API-F06B66?style=flat&logo=mailgun&logoColor=white" alt="Mailgun%20API">
     <img src="https://img.shields.io/badge/Cron-DDF4FF?style=flat&logo=pythonanywhere&logoColor=black" alt="PythonAnywhere">
 </p>
 	
-Efficient Python script that automates the daily download, merging, and email distribution of PDF file of Saamana e-newspaper. Concurrency techniques and secure HTTP requests, this script ensures timely and automated delivery of the newspaper to the specified recipient.
+Efficient Python script that automates the daily download, merging, compressing, and email distribution of PDF file of Saamana e-newspaper. Concurrency techniques and secure HTTP requests, this script ensures timely and automated delivery of the newspaper to the specified recipient.
 
 ## 🚀 Setup
 
@@ -34,6 +35,17 @@ Efficient Python script that automates the daily download, merging, and email di
     RECEIVER_EMAIL=receiver-email@example.com
     ```
 
+### 📄 PDF Compression
+
+The script uses Ghostscript to compress the merged PDF file. Ensure Ghostscript is installed and added to your PATH.
+
+- **Ghostscript Installation**:
+  - **Windows**: Download and install from [Ghostscript Downloads](https://www.ghostscript.com/download/gsdnld.html).
+  - **Linux**: Install via package manager, e.g., `sudo apt-get install ghostscript`.
+  - **macOS**: Install via Homebrew, e.g., `brew install ghostscript`.
+
+The compression settings used in the script are optimized for reducing file size while maintaining reasonable quality. 
+
 ### 🤖 GitHub Actions Configuration
 
 1. **Add Secrets**:
@@ -46,56 +58,13 @@ Efficient Python script that automates the daily download, merging, and email di
         - `RECEIVER_EMAIL`
 
 2. **Workflow Configuration**:
-    The workflow is defined in `.github/workflows/schedule.yml` and is set to run daily at 2:00 AM UTC.
-
-## 📈 Usage
-
-The script is designed to run automatically via GitHub Actions. However, you can also run it manually:
-
-```sh
-python script.py
-```
-
-## 📟 Code Excerpt
-
-Here's a technical excerpt from the script showcasing the SSL adapter for secure HTTP requests and the PDF merging functionality:
-
-```sh
-import ssl
-from PyPDF2 import PdfMerger
-import os
-from datetime import datetime
-import concurrent.futures
-
-class SSLAdapter(HTTPAdapter):
-    def init_poolmanager(self, *args, **kwargs):
-        context = ssl.create_default_context()
-        context.set_ciphers('DEFAULT@SECLEVEL=1')
-        kwargs['ssl_context'] = context
-        return super(SSLAdapter, self).init_poolmanager(*args, **kwargs)
-
-def download_pdf(url, filename):
-    response = requests.get(url)
-    if response.status_code == 200 and len(response.content) > 0:
-        with open(filename, 'wb') as f:
-            f.write(response.content)
-        return filename
-    return None
-
-def merge_pdfs(pdf_files, output_filename):
-    merger = PdfMerger()
-    for pdf in sorted(pdf_files, key=lambda x: int(x.split('_')[1].split('.')[0])):
-        if pdf:
-            merger.append(pdf)
-    merger.write(output_filename)
-    merger.close()
-```
+    The workflow is defined in `.github/workflows/schedule.yml` and is set to run daily at 2:30 AM UTC that is 8:00 AM IST. The workflow is written to run on Ubuntu. For other operating systems, you should make the necessary changes in `script.py` according to the operating system it is running on, as mentioned in the comments of the script.
 
 ## ⚙️ Support
 
-If you encounter any issues with this repository or have any questions, please open an issue in the Issues section. 
+If you encounter any issues with this repository or have any questions, please open an issue in the [Issues](https://github.com/avi4h/saamana-auto/issues) section. 
 
-## 🚨 Issues 
+## 🚨 Legal 
 
 If necessary, I can remove this repository upon request.
 

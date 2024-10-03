@@ -6,6 +6,7 @@ from PyPDF2 import PdfMerger
 import os
 from datetime import datetime
 import concurrent.futures
+import subprocess
 
 class SSLAdapter(HTTPAdapter):
     def init_poolmanager(self, *args, **kwargs):
@@ -30,23 +31,48 @@ def merge_pdfs(pdf_files, output_filename):
     merger.write(output_filename)
     merger.close()
 
+def compress_pdf(input_pdf, output_pdf):
+    gs_command = [
+        "gs", # For windows use "gswin64c" for 64-bit or "gswin32c" for 32-bit
+        "-sDEVICE=pdfwrite",
+        "-dCompatibilityLevel=1.3",
+        "-dPDFSETTINGS=/printer",
+        "-dNOPAUSE",
+        "-dBATCH",
+        "-dDownsampleColorImages=true",
+        "-dColorImageResolution=180",
+        f"-sOutputFile={output_pdf}",
+        input_pdf
+    ]
+    try:
+        subprocess.run(gs_command, check=True)
+    except FileNotFoundError:
+        print("Ghostscript not found. Please ensure Ghostscript is installed and added to your PATH.")
+    except subprocess.CalledProcessError as e:
+        print(f"Ghostscript error: {e}")
+
 def send_email_mailgun(subject, body, to_email, attachment_path, date_str):
     MAILGUN_API_KEY = os.getenv('MAILGUN_API_KEY')
     MAILGUN_DOMAIN = os.getenv('MAILGUN_DOMAIN')
+
+    if not MAILGUN_API_KEY or not MAILGUN_DOMAIN:
+        print("Mailgun API key or domain not set. Please set the MAILGUN_API_KEY and MAILGUN_DOMAIN environment variables.")
+        return None
     
     session = requests.Session()
     session.mount('https://', SSLAdapter())
 
     attachment_filename = f"Saamana_{date_str}.pdf"
 
-    return requests.post(
-        f"https://api.mailgun.net/v3/{MAILGUN_DOMAIN}/messages",
-        auth=("api", MAILGUN_API_KEY),
-        files=[("attachment", (attachment_filename, open(attachment_path, "rb").read()))],
-        data={"from": f"Cosmoo <mailgun@{MAILGUN_DOMAIN}>",
-            "to": [to_email],
-            "subject": subject,
-            "text": body})
+    with open(attachment_path, "rb") as attachment_file:
+        return requests.post(
+            f"https://api.mailgun.net/v3/{MAILGUN_DOMAIN}/messages",
+            auth=("api", MAILGUN_API_KEY),
+            files=[("attachment", (attachment_filename, attachment_file.read()))],
+            data={"from": f"Cosmoo <mailgun@{MAILGUN_DOMAIN}>",
+                "to": [to_email],
+                "subject": subject,
+                "text": body})
 
 def download_and_merge_newspaper(date_str):
     base_url = "https://epaper.saamana.com/download.php?file=https://enewspapr.com/News/SAMANA/PUN/{year}/{month}/{day}/{date_str}_{page}.PDF&pageno={page}"
@@ -66,25 +92,44 @@ def download_and_merge_newspaper(date_str):
             if len(future_to_page) >= 5:
                 for future in concurrent.futures.as_completed(future_to_page):
                     page_num = future_to_page[future]
-                    filename = future.result()
-                    if filename:
-                        pdf_files.append(filename)
-                    else:
-                        break
+                    try:
+                        filename = future.result()
+                        if filename:
+                            pdf_files.append(filename)
+                        else:
+                            break
+                    except Exception as e:
+                        print(f"Error downloading page {page_num}: {e}")
                 future_to_page.clear()
                 if not filename:
                     break
+        
+        for future in concurrent.futures.as_completed(future_to_page):
+            page_num = future_to_page[future]
+            try:
+                filename = future.result()
+                if filename:
+                    pdf_files.append(filename)
+            except Exception as e:
+                print(f"Error downloading page {page_num}: {e}")
 
     if pdf_files:
         output_filename = f"SAAMANA_PUNE_{date_str}.pdf"
         merge_pdfs(pdf_files, output_filename)
-        
-        # Clean up individual page PDFs
+
         for pdf in pdf_files:
             os.remove(pdf)
         
-        print(f"Downloaded {len(pdf_files)} pages into {output_filename}")
-        return output_filename
+        original_size = os.path.getsize(output_filename) / (1024 * 1024)  
+        print(f"Merged {len(pdf_files)} pages into {output_filename} with size {original_size:.2f} MB")
+
+        compressed_output_filename = f"COMPRESSED_SAAMANA_PUNE_{date_str}.pdf"
+        compress_pdf(output_filename, compressed_output_filename)
+        
+        compressed_size = os.path.getsize(compressed_output_filename) / (1024 * 1024)  
+        print(f"Compressed {output_filename} to {compressed_output_filename} with size {compressed_size:.2f} MB")
+        
+        return compressed_output_filename
     else:
         print("No pages were downloaded. Please check the date and try again.")
         return None
@@ -96,17 +141,22 @@ if __name__ == "__main__":
     
     if output_file:
         subject = f"Saamana - {today_date_word}"
-        body = f"Please find attached PDF for {today_date_word}."
+        body = f"Please find today's Saamana epaper attached as a PDF for {today_date_word}."
         to_email = os.getenv('RECEIVER_EMAIL')
         
-        response = send_email_mailgun(subject, body, to_email, output_file, today_date)
-        if response.status_code == 200:
-            print(f"Email sent successfully with attachment: {output_file}")
+        if not to_email:
+            print("Receiver email not set. Please set the RECEIVER_EMAIL environment variable.")
         else:
-            print(f"Failed to send email. Status code: {response.status_code}")
-            print(f"Response: {response.text}")
-        
-        # Optional: Remove the merged PDF after sending
-        os.remove(output_file)
+            response = send_email_mailgun(subject, body, to_email, output_file, today_date)
+            if response and response.status_code == 200:
+                print(f"Email sent successfully with attachment: {output_file}")
+            else:
+                print(f"Failed to send email. Status code: {response.status_code if response else 'N/A'}")
+                print(f"Response: {response.text if response else 'N/A'}")
+            
+            try:
+                os.remove(output_file)
+            except OSError as e:
+                print(f"Error removing file {output_file}: {e}")
     else:
         print("Failed to generate PDF. No email sent.")
