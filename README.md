@@ -9,7 +9,7 @@
     <img src="https://img.shields.io/badge/Cron-DDF4FF?style=flat&logo=pythonanywhere&logoColor=black" alt="PythonAnywhere">
 </p>
 	
-Efficient Python script that automates the daily download, merging, compressing, and email distribution of PDF file of Saamana e-newspaper. Concurrency techniques and secure HTTP requests, this script ensures timely and automated delivery of the newspaper to the specified recipient.
+An efficient Python script that automates the daily download, merging, compressing, and email distribution of the Saamana e-newspaper PDF file. Concurrency techniques and secure HTTP requests, this script ensures timely and automated delivery of the newspaper to the specified recipient.
 
 ## 🚀 Setup
 
@@ -58,7 +58,7 @@ The compression settings used in the script are optimized for reducing file size
         - `RECEIVER_EMAIL`
 
 2. **Workflow Configuration**:
-    The workflow is defined in `.github/workflows/schedule.yml` and is set to run daily at 2:30 AM UTC that is 8:00 AM IST. The workflow is written to run on Ubuntu. For other operating systems, you should make the necessary changes in `script.py` according to the operating system it is running on, as mentioned in the comments of the script.
+    The workflow is defined in `.github/workflows/schedule.yml` and is set to run daily at 2:30 AM UTC that is 8:00 AM IST. It is written to run on Ubuntu. For other operating systems, you should make the necessary changes in `script.py` as mentioned in the comments.
 
 ## ⚙️ Support
 
