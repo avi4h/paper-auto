@@ -129,6 +129,9 @@ def download_and_merge_newspaper(date_str):
         compressed_size = os.path.getsize(compressed_output_filename) / (1024 * 1024)  
         print(f"Compressed {output_filename} to {compressed_output_filename} with size {compressed_size:.2f} MB")
         
+        os.remove(output_filename)
+
+        print(f"Downloaded, merged, and compressed {len(pdf_files)} pages into {compressed_output_filename}")
         return compressed_output_filename
     else:
         print("No pages were downloaded. Please check the date and try again.")
