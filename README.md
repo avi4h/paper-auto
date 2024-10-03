@@ -2,11 +2,11 @@
 
 <p align="left">
 	<img src="https://img.shields.io/github/last-commit/avi4h/saamana-auto?style=flat&logo=git&logoColor=white&color=green" alt="last-commit">
-	<img src="https://img.shields.io/badge/Python-FFE01B?style=flat&logo=Python&logoColor=3776AB&color=white" alt="Python">
-	<img src="https://img.shields.io/badge/GitHub%20Actions-2088FF.svg?style=flat&logo=GitHub-Actions&logoColor=white" alt="GitHub%20Actions">
+	<img src="https://img.shields.io/badge/Python-blue?style=flat&logo=Python&logoColor=yellow" alt="Python">
     <img src="https://img.shields.io/badge/Ghostscript-purple.svg?style=flat&logo=gitee&logoColor=black" alt="GitHub%20Actions">
     <img src="https://img.shields.io/badge/Mailgun%20API-F06B66?style=flat&logo=mailgun&logoColor=white" alt="Mailgun%20API">
-    <img src="https://img.shields.io/badge/Cron-DDF4FF?style=flat&logo=pythonanywhere&logoColor=black" alt="PythonAnywhere">
+	<img src="https://img.shields.io/badge/GitHub%20Actions-2088FF.svg?style=flat&logo=GitHub-Actions&logoColor=white" alt="GitHub%20Actions">
+    <img src="https://img.shields.io/badge/Cron-DDF4FF?style=flat&logo=pythonanywhere&logoColor=black" alt="Cron Job">
 </p>
 	
 An efficient Python script that automates the daily download, merging, compressing, and email distribution of the Saamana e-newspaper PDF file. Concurrency techniques and secure HTTP requests, this script ensures timely and automated delivery of the newspaper to the specified recipient.
