@@ -16,20 +16,26 @@ class SSLAdapter(HTTPAdapter):
         return super(SSLAdapter, self).init_poolmanager(*args, **kwargs)
 
 def download_pdf(url, filename):
-    response = requests.get(url)
-    if response.status_code == 200 and len(response.content) > 0:
-        with open(filename, 'wb') as f:
-            f.write(response.content)
-        return filename
+    try:
+        response = requests.get(url)
+        if response.status_code == 200 and len(response.content) > 0:
+            with open(filename, 'wb') as f:
+                f.write(response.content)
+            return filename
+    except Exception as e:
+        print(f"Error downloading {url}: {e}")
     return None
 
 def merge_pdfs(pdf_files, output_filename):
-    merger = PdfMerger()
-    for pdf in sorted(pdf_files, key=lambda x: int(x.split('_')[1].split('.')[0])):
-        if pdf:
-            merger.append(pdf)
-    merger.write(output_filename)
-    merger.close()
+    try:
+        merger = PdfMerger()
+        for pdf in sorted(pdf_files, key=lambda x: int(x.split('_')[1].split('.')[0])):
+            if pdf:
+                merger.append(pdf)
+        merger.write(output_filename)
+        merger.close()
+    except Exception as e:
+        print(f"Error merging PDFs: {e}")
 
 def compress_pdf(input_pdf, output_pdf):
     gs_command = [
@@ -76,33 +82,34 @@ def send_email_mailgun(subject, body, to_email, attachment_path, date_str):
 
 def download_and_merge_newspaper(date_str):
     base_url = "https://epaper.saamana.com/download.php?file=https://enewspapr.com/News/SAMANA/PUN/{year}/{month}/{day}/{date_str}_{page}.PDF&pageno={page}"
-    
+
     year, month, day = date_str[:4], date_str[4:6], date_str[6:]
     formatted_url = base_url.format(year=year, month=month, day=day, date_str=date_str, page="{page}")
+    # formatted_url = "https://epaper.saamana.com/download.php?file=https://enewspapr.com/News/SAMANA/PUN/2024/10/05/20241005_1.PDF&pageno=1"
 
     pdf_files = []
     page = 1
 
-    with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
         future_to_page = {}
         while True:
             future = executor.submit(download_pdf, formatted_url.format(page=page), f"page_{page}.pdf")
             future_to_page[future] = page
             page += 1
-            if len(future_to_page) >= 5:
+            if len(future_to_page) >= 10:
                 for future in concurrent.futures.as_completed(future_to_page):
                     page_num = future_to_page[future]
                     try:
                         filename = future.result()
                         if filename:
                             pdf_files.append(filename)
-                        else:
-                            break
                     except Exception as e:
                         print(f"Error downloading page {page_num}: {e}")
                 future_to_page.clear()
                 if not filename:
                     break
+            if page > 20: 
+                break
         
         for future in concurrent.futures.as_completed(future_to_page):
             page_num = future_to_page[future]
