@@ -10,7 +10,7 @@
 	<img src="https://img.shields.io/badge/Cron-DDF4FF?style=flat&logo=pythonanywhere&logoColor=black" alt="Cron Job">
 </p>
 	
-An efficient Python script that automates the daily download, merging, compressing, and email distribution of the e-newspaper PDF file, as well as sending it via Telegram. Concurrency techniques and secure HTTP requests, this script ensures timely and automated delivery of the newspaper to the specified recipients.
+Automates daily download, merging, compressing, and distribution of e-newspaper PDFs via email and Telegram using Python, concurrent futures, PyPDF2, Ghostscript, Telegram API and Mailgun API, scheduled via GitHub Actions.
 
 ## 🚀 Setup
 
