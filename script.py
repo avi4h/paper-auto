@@ -136,7 +136,7 @@ def download_and_merge_newspaper(date_str, base_url, max_pages, paper_name):
 def send_email_mailgun(mailgun_api_url, mailgun_api_key, mailgun_domain, sender, to_email, attachment_path, date_str, date_word, paper_name):
     subject = f"{paper_name.split('_')[0].capitalize()} {paper_name.split('_')[1].capitalize()} - {date_word}"
     body = f"Please find attached the newspaper."
-    attachment_filename = f"{paper_name}_{date_str}.pdf"
+    attachment_filename = f"{paper_name.split('_')[0].capitalize()} {paper_name.split('_')[1].capitalize()} - {date_word}.pdf"
 
     if not mailgun_api_key or not mailgun_domain:
         print("Mailgun API key or domain not set. Please set the MAILGUN_API_KEY and MAILGUN_DOMAIN environment variables.")
@@ -168,13 +168,12 @@ def send_email_mailgun(mailgun_api_url, mailgun_api_key, mailgun_domain, sender,
 
 def send_pdf_to_telegram(telegram_api_url, telegram_chat_id, pdf_filename, paper_name, date_word):
     with open(pdf_filename, 'rb') as pdf_file:
-        custom_filename = f"{paper_name.split('_')[0].capitalize()} {paper_name.split('_')[1].capitalize()} - {date_word}"
+        custom_filename = f"{paper_name.split('_')[0].capitalize()} {paper_name.split('_')[1].capitalize()} - {date_word}.pdf"
         files = {
             'document': (custom_filename, pdf_file),
         }
         data = {
             'chat_id': telegram_chat_id,
-            'caption': f"{paper_name.split('_')[0].capitalize()} {paper_name.split('_')[1].capitalize()} - {date_word}"
         }
         response = requests.post(telegram_api_url, data=data, files=files)
 
