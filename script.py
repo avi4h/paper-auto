@@ -1,3 +1,4 @@
+
 import requests
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.poolmanager import PoolManager
@@ -65,15 +66,13 @@ def download_and_merge_newspaper(date_str, paper):
         base_url = "https://epaper.saamana.com/download.php?file=https://enewspapr.com/News/SAMANA/PUN/{year}/{month}/{day}/{date_str}_{page}.PDF&pageno={page}"
         max_pages = 30
         paper_name = "SAAMANA_PUNE"
-
     elif paper == "pudhari":
         base_url = "https://epaper.pudhari.news/download.php?file=https://enewspapr.com/News/PUDHARI/KOL/{year}/{month}/{day}/{date_str}_{page}.PDF&pageno={page}"
         max_pages = 40
         paper_name = "PUDHARI_KOLHAPUR"
-
     else:
         print("Invalid paper")
-    
+        return None
 
     year, month, day = date_str[:4], date_str[4:6], date_str[6:]
     formatted_url = base_url.format(year=year, month=month, day=day, date_str=date_str, page="{page}")
@@ -101,7 +100,7 @@ def download_and_merge_newspaper(date_str, paper):
                     break
             if page > max_pages:
                 break
-        
+
         for future in concurrent.futures.as_completed(future_to_page):
             page_num = future_to_page[future]
             try:
@@ -117,16 +116,16 @@ def download_and_merge_newspaper(date_str, paper):
 
         for pdf in pdf_files:
             os.remove(pdf)
-        
-        original_size = os.path.getsize(output_filename) / (1024 * 1024)  
+
+        original_size = os.path.getsize(output_filename) / (1024 * 1024)
         print(f"Merged {len(pdf_files)} pages into {output_filename} with size {original_size:.2f} MB")
 
         compressed_output_filename = f"COMPRESSED_{paper_name}_{date_str}.pdf"
         compress_pdf(output_filename, compressed_output_filename)
-        
-        compressed_size = os.path.getsize(compressed_output_filename) / (1024 * 1024)  
+
+        compressed_size = os.path.getsize(compressed_output_filename) / (1024 * 1024)
         print(f"Compressed {output_filename} to {compressed_output_filename} with size {compressed_size:.2f} MB")
-        
+
         os.remove(output_filename)
 
         print(f"Downloaded, merged, and compressed {len(pdf_files)} pages into {compressed_output_filename}")
@@ -142,7 +141,7 @@ def send_email_mailgun(subject, body, to_email, attachment_path, date_str):
     if not MAILGUN_API_KEY or not MAILGUN_DOMAIN:
         print("Mailgun API key or domain not set. Please set the MAILGUN_API_KEY and MAILGUN_DOMAIN environment variables.")
         return None
-    
+
     session = requests.Session()
     session.mount('https://', SSLAdapter())
 
@@ -156,7 +155,7 @@ def send_email_mailgun(subject, body, to_email, attachment_path, date_str):
             data={"from": f"Cosmoo <mailgun@{MAILGUN_DOMAIN}>",
                 "to": [to_email],
                 "subject": subject,
-                "text": body})      
+                "text": body})
 
 def send_pdf_to_telegram(pdf_filename, paper_name, today_date_word):
     TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
@@ -164,7 +163,7 @@ def send_pdf_to_telegram(pdf_filename, paper_name, today_date_word):
 
     url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendDocument"
     place_name = "pune" if paper_name.lower() == "saamana" else "kolhapur"
-    
+
     with open(pdf_filename, 'rb') as pdf_file:
         files = {
             'document': pdf_file,
@@ -183,41 +182,37 @@ def send_pdf_to_telegram(pdf_filename, paper_name, today_date_word):
 if __name__ == "__main__":
     today_date = datetime.now().strftime("%Y%m%d")
     today_date_word = datetime.now().strftime("%b %d, %Y")
-    output_file_saamana = download_and_merge_newspaper(today_date, "saamana")
-    
-    if output_file_saamana:
-        subject = f"Saamana - {today_date_word}"
-        body = f"Please find today's Saamana epaper attached as a PDF for {today_date_word}."
-        to_email = os.getenv('RECEIVER_EMAIL')
-        
-        if not to_email:
-            print("Receiver email not set. Please set the RECEIVER_EMAIL environment variable.")
-        else:
-            response = send_email_mailgun(subject, body, to_email, output_file, today_date)
+
+    RECEIVER_EMAIL = os.getenv('RECEIVER_EMAIL')
+    if not RECEIVER_EMAIL:
+        print("Receiver email not set. Please set the RECEIVER_EMAIL environment variable.")
+    else:
+        output_file_saamana = download_and_merge_newspaper(today_date, "saamana")
+        if output_file_saamana:
+            subject = f"Saamana - {today_date_word}"
+            body = f"Please find today's Saamana epaper attached as a PDF for {today_date_word}."
+            response = send_email_mailgun(subject, body, RECEIVER_EMAIL, output_file_saamana, today_date)
             if response and response.status_code == 200:
-                print(f"Email sent successfully with attachment: {output_file}")
+                print(f"Email sent successfully with attachment: {output_file_saamana}")
             else:
                 print(f"Failed to send email. Status code: {response.status_code if response else 'N/A'}")
                 print(f"Response: {response.text if response else 'N/A'}")
-        
-        send_pdf_to_telegram(output_file_saamana, "saamana", today_date_word)
-            
-        try:
-            os.remove(output_file_saamana)
-        except OSError as e:
-            print(f"Error removing file {output_file_saamana}: {e}")
-    else:
-        print("Failed to generate Saamana PDF. No email and telegram sent.")
 
-    output_file_pudhari = download_and_merge_newspaper(today_date, "pudhari")   
+            send_pdf_to_telegram(output_file_saamana, "saamana", today_date_word)
 
+            try:
+                os.remove(output_file_saamana)
+            except OSError as e:
+                print(f"Error removing file {output_file_saamana}: {e}")
+        else:
+            print("Failed to generate Saamana PDF. No email and telegram sent.")
+
+    output_file_pudhari = download_and_merge_newspaper(today_date, "pudhari")
     if output_file_pudhari:
-        send_pdf_to_telegram(output_file_pudhari, "saamana", today_date_word)
-            
+        send_pdf_to_telegram(output_file_pudhari, "pudhari", today_date_word)
         try:
             os.remove(output_file_pudhari)
         except OSError as e:
             print(f"Error removing file {output_file_pudhari}: {e}")
-    
     else:
         print("Failed to generate Pudhari PDF. No telegram sent.")
