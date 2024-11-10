@@ -14,7 +14,7 @@ RECEIVER_EMAIL = os.getenv('RECEIVER_EMAIL')
 TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
 TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
 
-SENDERS_NAME = "PaperClip"
+SENDERS_NAME = "Cosmoo"
 DEVICE_CODE = "gs" # For windows use "gswin64c" for 64-bit or "gswin32c" for 32-bit
 TELEGRAM_API_URL = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendDocument"
 MAILGUN_API_URL = f"https://api.mailgun.net/v3/{MAILGUN_DOMAIN}/messages"
@@ -134,8 +134,8 @@ def download_and_merge_newspaper(date_str, base_url, max_pages, paper_name):
         return None
 
 def send_email_mailgun(mailgun_api_url, mailgun_api_key, mailgun_domain, sender, to_email, attachment_path, date_str, date_word, paper_name):
-    subject = f"{paper_name} Newspaper - {date_word}"
-    body = f"Please find attached the {paper_name} newspaper for {date_word}."
+    subject = f"{paper_name.split("_")[0].capitalize()} {paper_name.split("_")[1].capitalize()} - {date_word}"
+    body = f"Please find attached the newspaper."
     attachment_filename = f"{paper_name}_{date_str}.pdf"
 
     if not mailgun_api_key or not mailgun_domain:
@@ -168,12 +168,13 @@ def send_email_mailgun(mailgun_api_url, mailgun_api_key, mailgun_domain, sender,
 
 def send_pdf_to_telegram(telegram_api_url, telegram_chat_id, pdf_filename, paper_name, date_word):
     with open(pdf_filename, 'rb') as pdf_file:
+        custom_filename = f"{paper_name.split('_')[0].capitalize()} {paper_name.split('_')[1].capitalize()} - {date_word}"
         files = {
-            'document': pdf_file,
+            'document': (custom_filename, pdf_file),
         }
         data = {
             'chat_id': telegram_chat_id,
-            'caption': f"{paper_name}_{date_word}.pdf"
+            'caption': f"{paper_name.split('_')[0].capitalize()} {paper_name.split('_')[1].capitalize()} - {date_word}"
         }
         response = requests.post(telegram_api_url, data=data, files=files)
 
