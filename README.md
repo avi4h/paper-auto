@@ -1,15 +1,16 @@
-# `SAAMANA-AUTO`
+# `PAPER-AUTO`
 
 <p align="left">
-	<img src="https://img.shields.io/github/last-commit/avi4h/saamana-auto?style=flat&logo=git&logoColor=white&color=green" alt="last-commit">
+	<img src="https://img.shields.io/github/last-commit/avi4h/paper-auto?style=flat&logo=git&logoColor=white&color=green" alt="last-commit">
 	<img src="https://img.shields.io/badge/Python-blue?style=flat&logo=Python&logoColor=yellow" alt="Python">
-    <img src="https://img.shields.io/badge/Ghostscript-purple.svg?style=flat&logo=gitee&logoColor=black" alt="GitHub%20Actions">
-    <img src="https://img.shields.io/badge/Mailgun%20API-F06B66?style=flat&logo=mailgun&logoColor=white" alt="Mailgun%20API">
+	<img src="https://img.shields.io/badge/Ghostscript-purple.svg?style=flat&logo=gitee&logoColor=black" alt="GitHub%20Actions">
+	<img src="https://img.shields.io/badge/Telegram%20API-24A1DE.svg?style=flat&logo=Telegram&logoColor=white" alt="Telegram API">
+    	<img src="https://img.shields.io/badge/Mailgun%20API-F06B66?style=flat&logo=mailgun&logoColor=white" alt="Mailgun%20API">
 	<img src="https://img.shields.io/badge/GitHub%20Actions-2088FF.svg?style=flat&logo=GitHub-Actions&logoColor=white" alt="GitHub%20Actions">
-    <img src="https://img.shields.io/badge/Cron-DDF4FF?style=flat&logo=pythonanywhere&logoColor=black" alt="Cron Job">
+	<img src="https://img.shields.io/badge/Cron-DDF4FF?style=flat&logo=pythonanywhere&logoColor=black" alt="Cron Job">
 </p>
 	
-An efficient Python script that automates the daily download, merging, compressing, and email distribution of the Saamana e-newspaper PDF file. Concurrency techniques and secure HTTP requests, this script ensures timely and automated delivery of the newspaper to the specified recipient.
+An efficient Python script that automates the daily download, merging, compressing, and email distribution of the e-newspaper PDF file, as well as sending it via Telegram. Concurrency techniques and secure HTTP requests, this script ensures timely and automated delivery of the newspaper to the specified recipients.
 
 ## 🚀 Setup
 
@@ -17,8 +18,8 @@ An efficient Python script that automates the daily download, merging, compressi
 
 1. **Clone the repository**:
     ```sh
-    git clone https://github.com/avi4h/saamana-auto.git
-    cd saamana-auto
+    git clone https://github.com/avi4h/paper-auto.git
+    cd paper-auto
     ```
 
 2. **Install dependencies**:
@@ -30,6 +31,8 @@ An efficient Python script that automates the daily download, merging, compressi
 3. **Set up environment variables**:
     Create a `.env` file in the project directory with the following content:
     ```env
+    TELEGRAM_BOT_TOKEN=your-telegram-bot-token
+    TELEGRAM_CHAT_ID=your-telegram-chat-id
     MAILGUN_API_KEY=your-mailgun-api-key
     MAILGUN_DOMAIN=your-mailgun-domain
     RECEIVER_EMAIL=receiver-email@example.com
@@ -53,6 +56,8 @@ The compression settings used in the script are optimized for reducing file size
     - Click on "Settings".
     - In the left sidebar, click on "Secrets and variables" and then "Actions".
     - Add the following secrets:
+        - `TELEGRAM_BOT_TOKEN`
+        - `TELEGRAM_CHAT_ID`
         - `MAILGUN_API_KEY`
         - `MAILGUN_DOMAIN`
         - `RECEIVER_EMAIL`
@@ -62,7 +67,7 @@ The compression settings used in the script are optimized for reducing file size
 
 ## ⚙️ Support
 
-If you encounter any issues with this repository or have any questions, please open an issue in the [Issues](https://github.com/avi4h/saamana-auto/issues) section. 
+If you encounter any issues with this repository or have any questions, please open an issue in the [Issues](https://github.com/avi4h/paper-auto/issues) section. 
 
 ## 🚨 Legal 
 
