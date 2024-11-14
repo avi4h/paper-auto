@@ -24,7 +24,9 @@ jobs:
         pip install requests PyPDF2
     
     - name: Install Ghostscript
-      run: sudo apt-get install -y ghostscript
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y ghostscript
 
     - name: Run script
       env:
