@@ -8,8 +8,8 @@ from datetime import datetime
 import concurrent.futures
 import subprocess
 from config import (
-    MAILGUN_API_KEY, MAILGUN_DOMAIN, RECEIVER_EMAIL, TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID,
-    SENDERS_NAME, DEVICE_CODE, TELEGRAM_API_URL, MAILGUN_API_URL,
+    TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID,
+    SENDERS_NAME, DEVICE_CODE, TELEGRAM_API_URL,
     SAAMANA_BASE_URL, SAAMANA_MAX_PAGES, SAAMANA_PAPER_NAME,
     PUDHARI_BASE_URL, PUDHARI_MAX_PAGES, PUDHARI_PAPER_NAME
 )
@@ -118,39 +118,6 @@ def download_and_merge_newspaper(date_str, base_url, max_pages, paper_name):
         print("No pages were downloaded. Please check the date and try again.")
         return None
 
-def send_email_mailgun(mailgun_api_url, mailgun_api_key, mailgun_domain, sender, to_email, attachment_path, date_str, date_word, paper_name):
-    subject = f"{paper_name.split('_')[0].capitalize()} {paper_name.split('_')[1].capitalize()} - {date_word}"
-    body = f"Please find attached the newspaper."
-    attachment_filename = f"{paper_name.split('_')[0].capitalize()} {paper_name.split('_')[1].capitalize()} - {date_word}.pdf"
-
-    if not mailgun_api_key or not mailgun_domain:
-        print("Mailgun API key or domain not set. Please set the MAILGUN_API_KEY and MAILGUN_DOMAIN environment variables.")
-        return None
-
-    try:
-        session = requests.Session()
-        session.mount('https://', SSLAdapter())
-
-        with open(attachment_path, "rb") as attachment_file:
-            response = requests.post(
-                mailgun_api_url,
-                auth=("api", mailgun_api_key),
-                files=[("attachment", (attachment_filename, attachment_file.read()))],
-                data={"from": f"{sender} <mailgun@{mailgun_domain}>",
-                    "to": [to_email],
-                    "subject": subject,
-                    "text": body})
-
-        if response.status_code == 200:
-            print(f"Email sent successfully with attachment: {attachment_filename}")
-        else:
-            print(f"Failed to send email. Status code: {response.status_code}")
-            print(f"Response: {response.text}")
-
-    except requests.exceptions.RequestException as e:
-        print(f"Failed to send email: {e}")
-        return None
-
 def send_pdf_to_telegram(telegram_api_url, telegram_chat_id, pdf_filename, paper_name, date_word):
     with open(pdf_filename, 'rb') as pdf_file:
         custom_filename = f"{paper_name.split('_')[0].capitalize()} {paper_name.split('_')[1].capitalize()} - {date_word}.pdf"
@@ -179,14 +146,13 @@ if __name__ == "__main__":
             compress_pdf(output_file_saamana, compressed_output_file_saamana)
             os.remove(output_file_saamana)
             output_file_saamana = compressed_output_file_saamana
-        send_email_mailgun(MAILGUN_API_URL, MAILGUN_API_KEY, MAILGUN_DOMAIN, SENDERS_NAME, RECEIVER_EMAIL, output_file_saamana, today_date, today_date_word, SAAMANA_PAPER_NAME)
         send_pdf_to_telegram(TELEGRAM_API_URL, TELEGRAM_CHAT_ID, output_file_saamana, SAAMANA_PAPER_NAME, today_date_word)
         try:
             os.remove(output_file_saamana)
         except OSError as e:
             print(f"Error removing file {output_file_saamana}: {e}")
     else:
-        print("Failed to generate Saamana PDF. No email and telegram sent.")
+        print("Failed to generate Saamana PDF. No telegram sent.")
 
     output_file_pudhari = download_and_merge_newspaper(today_date, PUDHARI_BASE_URL, PUDHARI_MAX_PAGES, PUDHARI_PAPER_NAME)
     if output_file_pudhari:

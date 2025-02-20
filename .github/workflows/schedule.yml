@@ -32,7 +32,4 @@ jobs:
       env:
         TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
         TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-        MAILGUN_API_KEY: ${{ secrets.MAILGUN_API_KEY }}
-        MAILGUN_DOMAIN: ${{ secrets.MAILGUN_DOMAIN }}
-        RECEIVER_EMAIL: ${{ secrets.RECEIVER_EMAIL }}
       run: python script.py
