@@ -10,8 +10,8 @@
 	<img src="https://img.shields.io/badge/Cron-DDF4FF?style=flat&logo=pythonanywhere&logoColor=black" alt="Cron Job">
 </p>
 	
-Automates daily download, merging, compressing, and distribution of multiple e-newspaper PDFs via email and Telegram using Python, concurrent futures, PyPDF2, Ghostscript, Telegram API and Mailgun API, scheduled via GitHub Actions.
-
+**Automates daily download, merging, compressing, and distribution of multiple e-newspaper PDFs via email and Telegram using Python, concurrent futures, PyPDF2, Ghostscript, Telegram API and Mailgun API, scheduled via GitHub Actions.**
+  
 The script uses Ghostscript to compress the merged PDF file. Ensure Ghostscript is installed and added to your PATH.
 
 
