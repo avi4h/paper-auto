@@ -2,6 +2,7 @@
 	
 Automates daily download, merging, compressing, and distribution of multiple e-newspaper PDFs via email and Telegram using Python, concurrent futures, PyPDF2, Ghostscript, Telegram API and Mailgun API, scheduled via GitHub Actions.
   
+The script uses Ghostscript to compress the merged PDF file. Make sure Ghostscript is installed and added to your PATH.
 
 
 Add the secrets:
